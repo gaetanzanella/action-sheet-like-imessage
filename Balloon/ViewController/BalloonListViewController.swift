@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BalloonListViewController: UITableViewController {
+class BalloonListViewController: UITableViewController, BalloonActionViewControllerDelegate {
 
     private let balloons: [Balloon]
 
@@ -39,6 +39,32 @@ class BalloonListViewController: UITableViewController {
         }
         tableViewCell.configure(for: balloons[indexPath.row])
         return tableViewCell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? BalloonTableViewCell else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
+        let controller = BalloonActionViewController(
+            ballon: balloons[indexPath.row],
+            fromBalloonCoordinateSpace: cell.balloonView
+        )
+        controller.modalTransitionStyle = .crossDissolve
+        controller.modalPresentationStyle = .overFullScreen
+        controller.delegate = self
+        present(controller, animated: true, completion: nil)
+    }
+
+    // MARK: - BalloonActionViewControllerDelegate
+
+    func viewControllerDidRequestToDismiss(_ viewController: BalloonActionViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+
+    func viewController(_ viewController: BalloonActionViewController,
+                        willDisplayBalloon balloon: UICoordinateSpace,
+                        coordinator: UIViewControllerTransitionCoordinator?) {
+        let minY = viewController.fromBalloonCoordinateSpace.convert(balloon.bounds, from: balloon).minY
+        tableView.contentOffset.y -= minY
     }
 }
 

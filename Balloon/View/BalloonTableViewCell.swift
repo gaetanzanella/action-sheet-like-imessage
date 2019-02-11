@@ -10,7 +10,7 @@ import UIKit
 
 class BalloonTableViewCell: UITableViewCell {
 
-    private let balloonView = BalloonView()
+    let balloonView = BalloonView()
 
     // MARK: - UITableViewCell
 
@@ -33,6 +33,7 @@ class BalloonTableViewCell: UITableViewCell {
     // MARK: - Private
 
     private func setUpView() {
+        selectionStyle = .none
         contentView.addSubview(balloonView)
         balloonView.pinToSuperview(with: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
     }
